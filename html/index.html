@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Manager</title>
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Contact Manager</h1>
+            <p>Manage your personal contacts with ease</p>
+        </header>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search contacts by name or phone...">
+            <button id="searchBtn"><i class="fa fa-search"></i> Search</button>
+            <button id="addBtn"><i class="fa fa-plus"></i> Add Contact</button>
+        </div>
+
+        <div id="contactContainer" class="contact-container">
+            <!-- 联系人卡片将动态生成在这里 -->
+        </div>
+        <div class="import-export">
+            <button id="export-btn"><i class="fa fa-download"></i> 导出联系人</button>
+            <label for="import-file" class="custom-file-upload">
+                <i class="fa fa-upload"></i> 选择文件
+                <span id="file-name">未选择文件</span>
+            </label>
+            <input type="file" id="import-file" accept=".xlsx">
+        </div>
+    </div>
+
+    <!-- 添加联系人弹窗 -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideAddModal()">&times;</span>
+            <h2>Add New Contact</h2>
+            <form id="addForm">
+                <div class="form-group">
+                    <label for="addName">Name <span class="required">*</span></label>
+                    <input type="text" id="addName" required>
+                </div>
+                <div class="form-group">
+                    <label for="addPhone">Phone <span class="required">*</span></label>
+                    <input type="text" id="addPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="addEmail">Email</label>
+                    <input type="email" id="addEmail">
+                </div>
+                <div class="form-group">
+                    <label for="addAddress">Address</label>
+                    <input type="text" id="addAddress">
+                </div>
+                <div class="form-group">
+                    <label for="addFavorite">Favorite</label>
+                    <input type="checkbox" id="addFavorite">
+                </div>
+                <div id="add-contact-methods">
+                    <h4>Contact Methods</h4>
+                    <div class="contact-method">
+                        <select name="add-method_type">
+                            <option value="手机">手机</option>
+                            <option value="座机">座机</option>
+                            <option value="邮箱">邮箱</option>
+                            <option value="微信">微信</option>
+                            <option value="QQ">QQ</option>
+                            <option value="钉钉">钉钉</option>
+                            <option value="企业微信">企业微信</option>
+                            <option value="微博">微博</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="Skype">Skype</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="Telegram">Telegram</option>
+                            <option value="网站">网站</option>
+                            <option value="其他">其他</option>
+                        </select>
+                        <input type="text" name="add-method_value" placeholder="联系方式">
+                        <input type="checkbox" name="add-is_primary" value="1">主要
+                        <button type="button" class="remove-method">删除</button>
+                    </div>
+                </div>
+                <button type="button" id="add-method">添加联系方式</button>
+                <div class="form-actions">
+                    <button type="button" onclick="hideAddModal()">Cancel</button>
+                    <button type="button" onclick="addContact()">Save Contact</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 编辑联系人弹窗 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideEditModal()">&times;</span>
+            <h2>Edit Contact</h2>
+            <form id="editForm">
+                <input type="hidden" id="editId"> <!-- 隐藏的联系人ID -->
+                <div class="form-group">
+                    <label for="editName">Name <span class="required">*</span></label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone <span class="required">*</span></label>
+                    <input type="text" id="editPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input type="email" id="editEmail">
+                </div>
+                <div class="form-group">
+                    <label for="editAddress">Address</label>
+                    <input type="text" id="editAddress">
+                </div>
+                <div class="form-group">
+                    <label for="editFavorite">Favorite</label>
+                    <input type="checkbox" id="editFavorite">
+                </div>
+                <div id="edit-contact-methods">
+                    <h4>Contact Methods</h4>
+                    <div class="contact-method">
+                        <select name="edit-method_type">
+                        <option value="手机">手机</option>
+                        <option value="座机">座机</option>
+                        <option value="邮箱">邮箱</option>
+                        <option value="微信">微信</option>
+                        <option value="QQ">QQ</option>
+                        <option value="钉钉">钉钉</option>
+                        <option value="企业微信">企业微信</option>
+                        <option value="微博">微博</option>
+                        <option value="LinkedIn">LinkedIn</option>
+                        <option value="Skype">Skype</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                        <option value="Telegram">Telegram</option>
+                        <option value="网站">网站</option>
+                        <option value="其他">其他</option>
+                    </select>
+                        <input type="text" name="edit-method_value" placeholder="联系方式">
+                        <input type="checkbox" name="edit-is_primary" value="1">主要
+                        <button type="button" class="remove-method">删除</button>
+                    </div>
+                </div>
+                <button type="button" id="edit-method">添加联系方式</button>
+                <div class="form-actions">
+                    <button type="button" onclick="hideEditModal()">Cancel</button>
+                    <button type="button" onclick="updateContact()">Update Contact</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 通知提示 -->
+    <div id="notification" class="notification">
+        <i class="fa fa-check-circle"></i>
+        <span id="notificationText"></span>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
